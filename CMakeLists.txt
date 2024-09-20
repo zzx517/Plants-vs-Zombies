@@ -17,8 +17,8 @@ SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build/bin)
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build/lib)
 
 include_directories(./include)
-# include_directories(./include/client)
-# include_directories(./include/client/video)
+include_directories(./include/client)
+include_directories(./include/client/video)
 # include_directories(./include/client/input)
 # include_directories(./include/client/scene)
 
@@ -31,10 +31,10 @@ message(STATUS "CURRENT CONDA PREFIX: $ENV{CONDA_PREFIX}")
 include_directories($ENV{CONDA_PREFIX}/include)
 link_directories($ENV{CONDA_PREFIX}/lib)
 
-# add_subdirectory(./src/client)
+add_subdirectory(./src/client)
 add_executable(${PROJECT_NAME} ./src/main.cpp)
 
-# target_link_libraries(${PROJECT_NAME} PRIVATE client)
+target_link_libraries(${PROJECT_NAME} PRIVATE client)
 
 target_link_libraries(
     ${PROJECT_NAME}
