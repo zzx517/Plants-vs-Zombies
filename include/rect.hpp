@@ -160,8 +160,8 @@ Vector2<A> &operator/=(Vector2<A> &a, const A &b) {
 // * Rect
 
 template <typename T>
-struct Rect: public Vector2<T> {
-    T w, h;
+struct Rect {
+    T x, y, w, h;
 
     template <typename O>
     Rect<O> Cast( ) {
