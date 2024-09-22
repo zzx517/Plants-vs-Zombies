@@ -22,10 +22,9 @@ public:
 class SurfaceHelper {
 public:
     void                operator( )(SDL_Surface *) noexcept;
-    static SDL_Surface *SurfaceHelper::Load(const char *file);
-    static SDL_Surface *SurfaceHelper::Load(const std::string &file);
-    static SDL_Surface *SurfaceHelper::Create(
-        int width, int height, int depth, uint32_t format);
+    static SDL_Surface *Load(const char *file);
+    static SDL_Surface *Load(const std::string &file);
+    static SDL_Surface *Create(int width, int height, int depth, uint32_t format);
 };
 
 class Surface
