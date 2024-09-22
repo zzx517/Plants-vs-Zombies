@@ -6,19 +6,19 @@ SDL::SDL(
     Flags sdl, Flags img, Flags mix, int frequency, uint16_t format, int channels,
     int chunksize) {
     if (SDL_Init(sdl)) {
-        throw InitError(SDL_GetError( ));
+        throw InitError();
     }
     if (!IMG_Init(img)) {
-        throw InitError(IMG_GetError( ));
+        throw InitError();
     }
     if (TTF_Init( )) {
-        throw InitError(TTF_GetError( ));
+        throw InitError();
     }
     if (!Mix_Init(mix)) {
-        throw InitError(Mix_GetError( ));
+        throw InitError();
     }
     if (Mix_OpenAudio(frequency, format, channels, chunksize)) {
-        throw InitError(Mix_GetError( ));
+        throw InitError();
     }
 }
 

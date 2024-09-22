@@ -12,7 +12,7 @@ Window::Window(const std::string &title, const RectI &pos, Flags flags)
 Window::Window(const char *title, const RectI &pos, Flags flags)
     : unique_ptr(SDL_CreateWindow(title, pos.x, pos.y, pos.w, pos.h, flags)) {
     if (this->get( ) == nullptr) {
-        throw InitError(SDL_GetError( ));
+        throw InitError();
     }
 }
 
