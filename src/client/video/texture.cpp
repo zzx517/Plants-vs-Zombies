@@ -5,7 +5,7 @@ namespace zzx {
 template <typename T>
 Vector2I _Texture<T>::GetSize( ) const {
     Vector2I size;
-    GetSize(&size.w, &size.h);
+    GetSize(&size.x, &size.y);
     return size;
 }
 
@@ -30,7 +30,7 @@ int _Texture<T>::GetAccess( ) const {
 
 template <typename T>
 void _Texture<T>::GetAttributes(uint32_t *format, int *access, int *w, int *h) const {
-    if (SDL_QueryTexture(dynamic_cast<T *>(this)->get( ), format, access, w, h)) {
+    if (SDL_QueryTexture(static_cast<const T *>(this)->get( ), format, access, w, h)) {
         throw SDL_Error( );
     }
 }
@@ -38,7 +38,7 @@ void _Texture<T>::GetAttributes(uint32_t *format, int *access, int *w, int *h) c
 template <typename T>
 void _Texture<T>::DrawOn(
     const RectI *source, const Renderer &renderer, const RectI *target) const {
-    if (SDL_RenderCopy(renderer.get( ), dynamic_cast<T *>(this)->get( ), source, target)) {
+    if (SDL_RenderCopy(renderer.get( ), static_cast<const T *>(this)->get( ), source, target)) {
         throw SDL_Error( );
     }
 }
@@ -46,7 +46,8 @@ void _Texture<T>::DrawOn(
 template <typename T>
 void _Texture<T>::DrawOn(
     const RectI *source, const Renderer &renderer, const RectF *target) const {
-    if (SDL_RenderCopyF(renderer.get( ), dynamic_cast<T *>(this)->get( ), source, target)) {
+    if (SDL_RenderCopyF(
+            renderer.get( ), static_cast<const T *>(this)->get( ), source, target)) {
         throw SDL_Error( );
     }
 }
@@ -56,8 +57,8 @@ void _Texture<T>::DrawOn(
     const RectI *source, const Renderer &renderer, const RectI *target, Deg rotation,
     const Point2I *center, Flip flip) const {
     if (SDL_RenderCopyEx(
-            renderer.get( ), dynamic_cast<T *>(this)->get( ), source, target, rotation, center,
-            flip)) {
+            renderer.get( ), static_cast<const T *>(this)->get( ), source, target, rotation,
+            center, flip)) {
         throw SDL_Error( );
     }
 }
@@ -67,8 +68,8 @@ void _Texture<T>::DrawOn(
     const RectI *source, const Renderer &renderer, const RectF *target, Deg rotation,
     const Point2F *center, Flip flip) const {
     if (SDL_RenderCopyExF(
-            renderer.get( ), dynamic_cast<T *>(this)->get( ), source, target, rotation, center,
-            flip)) {
+            renderer.get( ), static_cast<const T *>(this)->get( ), source, target, rotation,
+            center, flip)) {
         throw SDL_Error( );
     }
 }

@@ -19,7 +19,7 @@ struct Vector2 {
 
     template <typename O>
     operator Vector2<O>( ) const {
-        return Cast<Vector2<O>>( );
+        return Cast<O>( );
     }
 };
 
@@ -32,7 +32,7 @@ struct Vector2<int>: public SDL_Point {
 
     template <typename O>
     operator Vector2<O>( ) {
-        return Cast<Vector2<O>>( );
+        return Cast<O>( );
     }
 };
 
@@ -45,7 +45,7 @@ struct Vector2<float>: public SDL_FPoint {
 
     template <typename O>
     operator Vector2<O>( ) {
-        return Cast<Vector2<O>>( );
+        return Cast<O>( );
     }
 };
 
@@ -68,13 +68,13 @@ Vector2<A> operator-(const Vector2<A> &a) {
 
 template <typename A, typename B>
 auto operator+(const Vector2<A> &a, const Vector2<B> &b) {
-    using T = std::common_type<A, B>;
+    using T = std::common_type_t<A, B>;
     return Vector2<T> {.x = static_cast<T>(a.x + b.x), .y = static_cast<T>(a.y + b.y)};
 }
 
 template <typename A, typename B>
 auto operator+(const Vector2<A> &a, const B &b) {
-    using T = std::common_type<A, B>;
+    using T = std::common_type_t<A, B>;
     return Vector2<T> {.x = static_cast<T>(a.x + b), .y = static_cast<T>(a.y + b)};
 }
 
@@ -99,19 +99,19 @@ Vector2<A> &operator+=(Vector2<A> &a, const A &b) {
 
 template <typename A, typename B>
 auto operator-(const Vector2<A> &a, const Vector2<B> &b) {
-    using T = std::common_type<A, B>;
+    using T = std::common_type_t<A, B>;
     return Vector2<T> {.x = static_cast<T>(a.x - b.x), .y = static_cast<T>(a.y - b.y)};
 }
 
 template <typename A, typename B>
 auto operator-(const Vector2<A> &a, const B &b) {
-    using T = std::common_type<A, B>;
+    using T = std::common_type_t<A, B>;
     return Vector2<T> {.x = static_cast<T>(a.x - b), .y = static_cast<T>(a.y - b)};
 }
 
 template <typename A, typename B>
 auto operator-(const A &a, const Vector2<B> &b) {
-    using T = std::common_type<A, B>;
+    using T = std::common_type_t<A, B>;
     return Vector2<T> {.x = static_cast<T>(a - b.x), .y = static_cast<T>(a - b.y)};
 }
 
@@ -131,7 +131,7 @@ Vector2<A> &operator-=(Vector2<A> &a, const A &b) {
 
 template <typename A, typename B>
 auto operator*(const Vector2<A> &a, const B &b) {
-    using T = std::common_type<A, B>;
+    using T = std::common_type_t<A, B>;
     return Vector2<T> {.x = static_cast<T>(a.x * b), .y = static_cast<T>(a.y * b)};
 }
 
@@ -149,7 +149,7 @@ Vector2<A> &operator*=(Vector2<A> &a, const A &b) {
 
 template <typename A, typename B>
 auto operator/(const Vector2<A> &a, const B &b) {
-    using T = std::common_type<A, B>;
+    using T = std::common_type_t<A, B>;
     return Vector2<T> {.x = static_cast<T>(a.x / b), .y = static_cast<T>(a.y / b)};
 }
 
@@ -177,12 +177,13 @@ struct Rect {
 
     template <typename O>
     operator Rect<O>( ) const {
-        return Cast<Rect<O>>( );
+        return Cast<O>( );
     }
 
     template <typename O>
     operator const Vector2<O> &( ) const {
-        return dynamic_cast<const Vector2<O> &>(*this);
+        // FIXME! reinterpret_cast Warning!
+        return reinterpret_cast<const Vector2<O> &>(*this);
     }
 
     template <typename O>
@@ -204,12 +205,13 @@ struct Rect<int>: public SDL_Rect {
 
     template <typename O>
     operator Rect<O>( ) {
-        return Cast<Rect<O>>( );
+        return Cast<O>( );
     }
 
     template <typename O>
     operator const Vector2<O> &( ) const {
-        return dynamic_cast<const Vector2<O> &>(*this);
+        // FIXME! reinterpret_cast Warning!
+        return reinterpret_cast<const Vector2<O> &>(*this);
     }
 
     template <typename O>
@@ -223,20 +225,18 @@ struct Rect<float>: public SDL_FRect {
     template <typename O>
     Rect<O> Cast( ) {
         return Rect<O> {
-            .x = static_cast<O>(x),
-            .y = static_cast<O>(y),
-            .w = static_cast<O>(w),
-            .h = static_cast<O>(h)};
+            static_cast<O>(x), static_cast<O>(y), static_cast<O>(w), static_cast<O>(h)};
     }
 
     template <typename O>
     operator Rect<O>( ) {
-        return Cast<Rect<O>>( );
+        return Cast<O>( );
     }
 
     template <typename O>
     operator const Vector2<O> &( ) const {
-        return dynamic_cast<const Vector2<O> &>(*this);
+        // FIXME! reinterpret_cast Warning!
+        return reinterpret_cast<const Vector2<O> &>(*this);
     }
 
     template <typename O>
@@ -251,12 +251,10 @@ using RectD = Rect<double>;
 
 template <typename A, typename B>
 auto operator+(const Rect<A> &a, const Vector2<B> &b) {
-    using T = std::common_type<A, B>;
+    using T = std::common_type_t<A, B>;
     return Rect<T> {
-        .x = static_cast<T>(a.x + b.x),
-        .y = static_cast<T>(a.y + b.y),
-        .w = static_cast<T>(a.w),
-        .h = static_cast<T>(a.h)};
+        static_cast<T>(a.x + b.x), static_cast<T>(a.y + b.y), static_cast<T>(a.w),
+        static_cast<T>(a.h)};
 }
 
 template <typename A, typename B>
@@ -273,7 +271,7 @@ Rect<A> &operator+=(Rect<A> &a, const Vector2<A> &b) {
 
 template <typename A, typename B>
 auto operator-(const Rect<A> &a, const Vector2<B> &b) {
-    using T = std::common_type<A, B>;
+    using T = std::common_type_t<A, B>;
     return Rect<T> {
         .x = static_cast<T>(a.x - b.x),
         .y = static_cast<T>(a.y - b.y),
@@ -290,12 +288,10 @@ Rect<A> &operator-=(Rect<A> &a, const Vector2<A> &b) {
 
 template <typename A, typename B>
 auto operator*(const Rect<A> &a, const B &b) {
-    using T = std::common_type<A, B>;
+    using T = std::common_type_t<A, B>;
     return Rect<T> {
-        .x = static_cast<T>(a.x * b),
-        .y = static_cast<T>(a.y * b),
-        .w = static_cast<T>(a.w * b),
-        .h = static_cast<T>(a.h * b)};
+        static_cast<T>(a.x * b), static_cast<T>(a.y * b), static_cast<T>(a.w * b),
+        static_cast<T>(a.h * b)};
 }
 
 template <typename A, typename B>
@@ -314,7 +310,7 @@ Rect<A> &operator*=(Rect<A> &a, const A &b) {
 
 template <typename A, typename B>
 auto operator/(const Rect<A> &a, const B &b) {
-    using T = std::common_type<A, B>;
+    using T = std::common_type_t<A, B>;
     return Rect<T> {
         .x = static_cast<T>(a.x / b),
         .y = static_cast<T>(a.y / b),
