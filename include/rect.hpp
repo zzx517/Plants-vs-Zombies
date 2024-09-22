@@ -13,12 +13,12 @@ struct Vector2 {
     T x, y;
 
     template <typename O>
-    Vector2<O> Cast( ) {
+    Vector2<O> Cast( ) const {
         return Vector2<O> {.x = static_cast<O>(x), .y = static_cast<O>(y)};
     }
 
     template <typename O>
-    operator Vector2<O>( ) {
+    operator Vector2<O>( ) const {
         return Cast<Vector2<O>>( );
     }
 };
@@ -52,6 +52,9 @@ struct Vector2<float>: public SDL_FPoint {
 using Vector2I = Vector2<int>;
 using Vector2F = Vector2<float>;
 using Vector2D = Vector2<double>;
+using Point2I  = Vector2I;
+using Point2F  = Vector2F;
+using Point2D  = Vector2D;
 
 template <typename A>
 Vector2<A> operator+(const Vector2<A> &a) {
@@ -164,7 +167,7 @@ struct Rect {
     T x, y, w, h;
 
     template <typename O>
-    Rect<O> Cast( ) {
+    Rect<O> Cast( ) const {
         return Rect<O> {
             .x = static_cast<O>(x),
             .y = static_cast<O>(y),
@@ -173,8 +176,18 @@ struct Rect {
     }
 
     template <typename O>
-    operator Rect<O>( ) {
+    operator Rect<O>( ) const {
         return Cast<Rect<O>>( );
+    }
+
+    template <typename O>
+    operator const Vector2<O> &( ) const {
+        return dynamic_cast<const Vector2<O> &>(*this);
+    }
+
+    template <typename O>
+    operator Vector2<O>( ) const {
+        return Vector2<O> {.x = x, .y = y};
     }
 };
 
@@ -193,6 +206,16 @@ struct Rect<int>: public SDL_Rect {
     operator Rect<O>( ) {
         return Cast<Rect<O>>( );
     }
+
+    template <typename O>
+    operator const Vector2<O> &( ) const {
+        return dynamic_cast<const Vector2<O> &>(*this);
+    }
+
+    template <typename O>
+    operator Vector2<O>( ) const {
+        return Vector2<O> {.x = x, .y = y};
+    }
 };
 
 template <>
@@ -209,6 +232,16 @@ struct Rect<float>: public SDL_FRect {
     template <typename O>
     operator Rect<O>( ) {
         return Cast<Rect<O>>( );
+    }
+
+    template <typename O>
+    operator const Vector2<O> &( ) const {
+        return dynamic_cast<const Vector2<O> &>(*this);
+    }
+
+    template <typename O>
+    operator Vector2<O>( ) const {
+        return Vector2<O> {.x = x, .y = y};
     }
 };
 
@@ -297,5 +330,7 @@ Rect<A> &operator/=(Rect<A> &a, const A &b) {
     a.h /= b;
     return a;
 }
+
+using Deg = double;
 
 }  // namespace zzx
