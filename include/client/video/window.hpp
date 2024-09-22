@@ -1,12 +1,11 @@
 #pragma once
 
-#include <SDL2/SDL_video.h>
-
 #include <memory>
 #include <string>
 
-#include "exception.hpp"
 #include "rect.hpp"
+#include "sdl_init.hpp"
+#include "surface.hpp"
 
 namespace zzx {
 
