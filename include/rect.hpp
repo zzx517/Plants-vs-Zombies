@@ -153,10 +153,23 @@ auto operator/(const Vector2<A> &a, const B &b) {
     return Vector2<T> {.x = static_cast<T>(a.x / b), .y = static_cast<T>(a.y / b)};
 }
 
+template <typename A, typename B>
+auto operator/(const Vector2<A> &a, const Vector2<B> &b) {
+    using T = std::common_type_t<A, B>;
+    return Vector2<T> {.x = static_cast<T>(a.x / b.x), .y = static_cast<T>(a.y / b.y)};
+}
+
 template <typename A>
 Vector2<A> &operator/=(Vector2<A> &a, const A &b) {
     a.x /= b;
     a.y /= b;
+    return a;
+}
+
+template <typename A>
+Vector2<A> &operator/=(Vector2<A> &a, const Vector2<A> &b) {
+    a.x /= b.x;
+    a.y /= b.y;
     return a;
 }
 
