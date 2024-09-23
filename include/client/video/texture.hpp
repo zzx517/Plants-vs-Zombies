@@ -4,6 +4,7 @@
 #include <string>
 
 #include "exception.hpp"
+#include "image.hpp"
 #include "render.hpp"
 #include "sdl_init.hpp"
 
@@ -64,11 +65,16 @@ class Texture
 private:
     using unique_ptr = std::unique_ptr<SDL_Texture, TextureHelper>;
 
+    Texture(const Texture &)            = delete;
+    Texture &operator=(const Texture &) = delete;
+
 public:
     using unique_ptr::unique_ptr;
     Texture(const Renderer &renderer, const char *file);
     Texture(const Renderer &renderer, const std::string &file);
-    ~Texture( ) noexcept = default;
+    ~Texture( ) noexcept           = default;
+    Texture(Texture &&)            = default;
+    Texture &operator=(Texture &&) = default;
 };
 
 class TextureShared
@@ -84,29 +90,6 @@ public:
     ~TextureShared( ) noexcept = default;
 };
 
-class Image: private Texture {
-private:
-    RectI shift;
-
-public:
-    Image(const Renderer &renderer, const char *file, const RectI &shift);
-    Image(const Renderer &renderer, const std::string &file, const RectI & shift);
-    ~Image( ) = default;
-
-private:
-    using Texture::DrawOn;
-
-public:
-    void DrawOn(const Renderer &renderer, const Point2I &pos) const;
-    void DrawOn(const Renderer &renderer, const Point2F &pos) const;
-    void DrawOn(const Renderer &renderer, const Point2I &pos, float scale) const;
-    void DrawOn(const Renderer &renderer, const Point2F &pos, float scale) const;
-    void DrawOn(
-        const Renderer &renderer, const Point2I &pos, float scale, Deg rotation,
-        const Point2I &center, Flip flip) const;
-    void DrawOn(
-        const Renderer &renderer, const Point2F &pos, float scale, Deg rotation,
-        const Point2F &center, Flip flip) const;
-};
+using Image = ImageOf<Texture>;
 
 }  // namespace zzx

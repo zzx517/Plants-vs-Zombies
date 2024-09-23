@@ -157,49 +157,15 @@ Texture::Texture(const Renderer &renderer, const std::string &file)
     : unique_ptr(TextureHelper::Load(renderer, file)) { }
 
 TextureShared::TextureShared(const Renderer &renderer, const char *file)
-    : shared_ptr(IMG_LoadTexture(renderer.get( ), file), TextureHelper( )) {
-    if (get( ) == nullptr) {
-        throw InitError(SDL_GetError( ));
-    }
-}
+    : shared_ptr(TextureHelper::Load(renderer, file), TextureHelper( )) { }
 
 TextureShared::TextureShared(const Renderer &renderer, const std::string &file)
-    : TextureShared(renderer, file.c_str( )) { }
+    : shared_ptr(TextureHelper::Load(renderer, file), TextureHelper( )) { }
 
-Image::Image(const Renderer &renderer, const char *file, const RectI &shift)
-    : Texture(renderer, file)
-    , shift {shift} { }
-
-Image::Image(const Renderer &renderer, const std::string &file, const RectI &shift)
-    : Texture(renderer, file)
-    , shift {shift} { }
-
-void Image::DrawOn(const Renderer &renderer, const Point2I &pos) const {
-    DrawOn(renderer, static_cast<RectI>(shift + pos));
-}
-
-void Image::DrawOn(const Renderer &renderer, const Point2F &pos) const {
-    DrawOn(renderer, static_cast<RectF>(shift + pos));
-}
-
-void Image::DrawOn(const Renderer &renderer, const Point2I &pos, float scale) const {
-    DrawOn(renderer, static_cast<RectI>(shift * scale + pos));
-}
-
-void Image::DrawOn(const Renderer &renderer, const Point2F &pos, float scale) const {
-    DrawOn(renderer, static_cast<RectF>(shift * scale + pos));
-}
-
-void Image::DrawOn(
-    const Renderer &renderer, const Point2I &pos, float scale, Deg rotation,
-    const Point2I &center, Flip flip) const {
-    DrawOn(renderer, static_cast<RectI>(shift * scale) + pos, rotation, center, flip);
-}
-
-void Image::DrawOn(
-    const Renderer &renderer, const Point2F &pos, float scale, Deg rotation,
-    const Point2F &center, Flip flip) const {
-    DrawOn(renderer, shift * scale + pos, rotation, center, flip);
-}
+template class ImageOf<Texture>;
+template ImageOf<Texture>::ImageOf<const Renderer &, const char *>(
+    const Renderer &renderer, const char *file, const RectI &shift);
+template ImageOf<Texture>::ImageOf<const Renderer &, const std::string &>(
+    const Renderer &renderer, const std::string &file, const RectI &shift);
 
 }  // namespace zzx
