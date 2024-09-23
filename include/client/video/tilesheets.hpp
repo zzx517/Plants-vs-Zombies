@@ -21,8 +21,8 @@ public:
     int      GetCols( ) const noexcept;
     // {.x = cols, .y = rows}
     Vector2I GetShape( ) const;
-    Vector2I GetTileSize( ) const;
-    void     GetTileSize(int &w, int &h) const;
+    Vector2I GetSize( ) const;
+    void     GetSize(int &w, int &h) const;
 
     RectI At(int i) const;
 

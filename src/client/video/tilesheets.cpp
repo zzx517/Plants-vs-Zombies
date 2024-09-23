@@ -6,14 +6,14 @@ Tilesheets::Tilesheets(Renderer &renderer, const char *file, int len, const Vect
     : Texture {renderer, file}
     , len {len}
     , cols {cols}
-    , size {GetSize( ) / shape} { }
+    , size {Texture::GetSize( ) / shape} { }
 
 Tilesheets::Tilesheets(
     Renderer &renderer, const std::string &file, int len, const Vector2I &shape)
     : Texture {renderer, file}
     , len {len}
     , cols {cols}
-    , size {GetSize( ) / shape} { }
+    , size {Texture::GetSize( ) / shape} { }
 
 int Tilesheets::GetLength( ) const noexcept {
     return len;
@@ -31,11 +31,11 @@ Vector2I Tilesheets::GetShape( ) const {
     return {GetCols( ), GetRows( )};
 }
 
-Vector2I Tilesheets::GetTileSize( ) const {
+Vector2I Tilesheets::GetSize( ) const {
     return size;
 }
 
-void Tilesheets::GetTileSize(int &w, int &h) const {
+void Tilesheets::GetSize(int &w, int &h) const {
     w = size.x;
     h = size.y;
 }
