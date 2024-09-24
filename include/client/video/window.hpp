@@ -20,10 +20,14 @@ private:
 
 public:
     using Flags = uint32_t;
+    static constexpr RectI CENTERED_HALF
+        = {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1920 / 2, 1080 / 2};
 
     using unique_ptr::unique_ptr;
-    Window(const std::string &title, const RectI &pos, Flags flags);
-    Window(const char *title, const RectI &pos, Flags flags);
+    Window(
+        const std::string &title, const RectI &pos = CENTERED_HALF,
+        Flags flags = SDL_WINDOW_SHOWN);
+    Window(const char *title, const RectI &pos = CENTERED_HALF, Flags flags = SDL_WINDOW_SHOWN);
     ~Window( ) noexcept = default;
 };
 

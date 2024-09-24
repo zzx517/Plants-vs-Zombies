@@ -17,7 +17,7 @@ template <typename Texture, typename... Args>
         t.DrawOn(args..., renderer, tarI, rotation, centerI, flip);
         t.DrawOn(args..., renderer, tarF, rotation, centerF, flip);
     }
-class ImageOf: private Texture {
+class ImageOf: public Texture {
 public:
     using Flip = Renderer::Flip;
 
@@ -37,36 +37,43 @@ public:
         : Texture(init...)
         , shift {shift} { }
 
-    ~ImageOf( ) = default;
+    template <typename... I>
+    ImageOf<Texture, Args...> Init(I... init, const RectI &shift) {
+        return ImageOf<Texture, Args...>(Texture(init...), shift);
+    }
 
-    void DrawOn(const Args &...args, const Renderer &renderer, const Vector2I &pos) const {
+    ~ImageOf( )                                                        = default;
+    ImageOf(ImageOf<Texture, Args...> &&)                              = default;
+    ImageOf<Texture, Args...> &operator=(ImageOf<Texture, Args...> &&) = default;
+
+    void DrawOn(Args... args, const Renderer &renderer, const Vector2I &pos) const {
         Texture::DrawOn(args..., renderer, static_cast<RectI>(shift + pos));
     }
 
-    void DrawOn(const Args &...args, const Renderer &renderer, const Vector2F &pos) const {
+    void DrawOn(Args... args, const Renderer &renderer, const Vector2F &pos) const {
         Texture::DrawOn(args..., renderer, static_cast<RectF>(shift + pos));
     }
 
     void DrawOn(
-        const Args &...args, const Renderer &renderer, const Vector2I &pos, float scale) const {
+        Args... args, const Renderer &renderer, const Vector2I &pos, float scale) const {
         Texture::DrawOn(args..., renderer, static_cast<RectI>(shift * scale + pos));
     }
 
     void DrawOn(
-        const Args &...args, const Renderer &renderer, const Vector2F &pos, float scale) const {
+        Args... args, const Renderer &renderer, const Vector2F &pos, float scale) const {
         Texture::DrawOn(args..., renderer, static_cast<RectF>(shift * scale + pos));
     }
 
     void DrawOn(
-        const Args &...args, const Renderer &renderer, const Vector2I &pos, float scale,
-        Deg rotation, const Vector2I &center, Flip flip) const {
+        Args... args, const Renderer &renderer, const Vector2I &pos, float scale, Deg rotation,
+        const Vector2I &center, Flip flip) const {
         Texture::DrawOn(
             args..., renderer, static_cast<RectI>(shift * scale) + pos, rotation, center, flip);
     }
 
     void DrawOn(
-        const Args &...args, const Renderer &renderer, const Vector2F &pos, float scale,
-        Deg rotation, const Vector2F &center, Flip flip) const {
+        Args... args, const Renderer &renderer, const Vector2F &pos, float scale, Deg rotation,
+        const Vector2F &center, Flip flip) const {
         Texture::DrawOn(args..., renderer, shift * scale + pos, rotation, center, flip);
     }
 };

@@ -1,34 +1,40 @@
 #pragma once
 
+#include "counter.hpp"
 #include "texture.hpp"
 
 namespace zzx {
 
-class Tilesheets: public Texture {
+class Tilesheets
+    : public Texture
+    , public Periodic<int> {
 private:
-    int      len, cols;
-    Vector2I size;
+    using Periodic = Periodic<int>;
+
+public:
+    using Type = Periodic::Type;
+
+private:
+    Vector2I shape, size;
 
     Tilesheets(const Tilesheets &)            = delete;
     Tilesheets &operator=(const Tilesheets &) = delete;
 
 public:
-    Tilesheets(const Renderer &renderer, const char *file, int len, const Vector2I &shape);
+    Tilesheets(const Renderer &renderer, const char *file, int length, const Vector2I &shape);
     Tilesheets(
-        const Renderer &renderer, const std::string &file, int len, const Vector2I &shape);
+        const Renderer &renderer, const std::string &file, int length, const Vector2I &shape);
     ~Tilesheets( )                       = default;
     Tilesheets(Tilesheets &&)            = default;
     Tilesheets &operator=(Tilesheets &&) = default;
 
-    using Texture::DrawOn;
 
-    int      GetLength( ) const noexcept;
-    int      GetRows( ) const noexcept;
-    int      GetCols( ) const noexcept;
+    inline int      GetRows( ) const noexcept;
+    inline int      GetCols( ) const noexcept;
     // {.x = cols, .y = rows}
-    Vector2I GetShape( ) const;
-    Vector2I GetSize( ) const;
-    void     GetSize(int &w, int &h) const;
+    inline Vector2I GetShape( ) const;
+    inline Vector2I GetSize( ) const;
+    inline void     GetSize(int &w, int &h) const;
 
     RectI At(int i) const;
 
