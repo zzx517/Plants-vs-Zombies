@@ -9,14 +9,14 @@ void RendererDeleter::operator( )(SDL_Renderer *r) noexcept {
 Renderer::Renderer(const Window &window, int index, Flags flags)
     : unique_ptr(SDL_CreateRenderer(window.get( ), index, flags)) {
     if (this->get( ) == nullptr) {
-        throw InitError(SDL_GetError( ));
+        throw RendererInitError();
     }
 }
 
 Renderer::Renderer(const Surface &surface)
     : unique_ptr(SDL_CreateSoftwareRenderer(surface.get( ))) {
     if (this->get( ) == nullptr) {
-        throw InitError(SDL_GetError( ));
+        throw RendererInitError();
     }
 }
 

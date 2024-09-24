@@ -19,6 +19,11 @@ private:
     using unique_ptr = std::unique_ptr<SDL_Window, WindowDeleter>;
 
 public:
+    class WindowInitError: public InitError {
+    public:
+        using InitError::InitError;
+    };
+
     using Flags = uint32_t;
     static constexpr RectI CENTERED_HALF
         = {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1920 / 2, 1080 / 2};

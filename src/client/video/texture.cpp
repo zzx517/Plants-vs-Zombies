@@ -9,7 +9,7 @@ void TextureHelper::operator( )(SDL_Texture *t) noexcept {
 SDL_Texture *TextureHelper::Load(const Renderer &renderer, const char *file) {
     auto t = IMG_LoadTexture(renderer.get( ), file);
     if (t == nullptr) {
-        throw SDL_Error( );
+        throw LoadFileError( );
     }
     return t;
 }

@@ -22,6 +22,11 @@ private:
     using unique_ptr = std::unique_ptr<SDL_Renderer, RendererDeleter>;
 
 public:
+    class RendererInitError: public InitError {
+    public:
+        using InitError::InitError;
+    };
+
     using Flip      = SDL_RendererFlip;
     using Flags     = uint32_t;
     using BlendMode = SDL_BlendMode;

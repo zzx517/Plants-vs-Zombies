@@ -10,8 +10,30 @@
 
 namespace zzx {
 
+class TextureHelper {
+public:
+    class QueryError: public SDL_Error {
+    public:
+        using SDL_Error::SDL_Error;
+    };
+
+    class RendererDrawError: public SDL_Error {
+    public:
+        using SDL_Error::SDL_Error;
+    };
+
+    class LoadFileError: public SDL_Error {
+    public:
+        using SDL_Error::SDL_Error;
+    };
+
+    void                operator( )(SDL_Texture *) noexcept;
+    static SDL_Texture *Load(const Renderer &renderer, const char *file);
+    static SDL_Texture *Load(const Renderer &renderer, const std::string &file);
+};
+
 template <typename T>
-class _Texture {
+class _TextureBase {
 public:
     using Flip = Renderer::Flip;
 
@@ -37,7 +59,7 @@ public:
 
     void GetAttributes(uint32_t *format, int *access, int *w, int *h) const {
         if (SDL_QueryTexture(static_cast<const T *>(this)->get( ), format, access, w, h)) {
-            throw SDL_Error( );
+            throw TextureHelper::QueryError( );
         }
     }
 
@@ -90,14 +112,14 @@ public:
     void DrawOn(const RectI *source, const Renderer &renderer, const RectI *target) const {
         if (SDL_RenderCopy(
                 renderer.get( ), static_cast<const T *>(this)->get( ), source, target)) {
-            throw SDL_Error( );
+            throw TextureHelper::RendererDrawError( );
         }
     }
 
     void DrawOn(const RectI *source, const Renderer &renderer, const RectF *target) const {
         if (SDL_RenderCopyF(
                 renderer.get( ), static_cast<const T *>(this)->get( ), source, target)) {
-            throw SDL_Error( );
+            throw TextureHelper::RendererDrawError( );
         }
     }
 
@@ -107,7 +129,7 @@ public:
         if (SDL_RenderCopyEx(
                 renderer.get( ), static_cast<const T *>(this)->get( ), source, target, rotation,
                 center, flip)) {
-            throw SDL_Error( );
+            throw TextureHelper::RendererDrawError( );
         }
     }
 
@@ -117,20 +139,13 @@ public:
         if (SDL_RenderCopyExF(
                 renderer.get( ), static_cast<const T *>(this)->get( ), source, target, rotation,
                 center, flip)) {
-            throw SDL_Error( );
+            throw TextureHelper::RendererDrawError( );
         }
     }
 };
 
-class TextureHelper {
-public:
-    void                operator( )(SDL_Texture *) noexcept;
-    static SDL_Texture *Load(const Renderer &renderer, const char *file);
-    static SDL_Texture *Load(const Renderer &renderer, const std::string &file);
-};
-
 class Texture
-    : public _Texture<Texture>
+    : public _TextureBase<Texture>
     , public std::unique_ptr<SDL_Texture, TextureHelper> {
 private:
     using unique_ptr = std::unique_ptr<SDL_Texture, TextureHelper>;
@@ -148,7 +163,7 @@ public:
 };
 
 class TextureShared
-    : public _Texture<Texture>
+    : public _TextureBase<Texture>
     , public std::shared_ptr<SDL_Texture> {
 private:
     using shared_ptr = std::shared_ptr<SDL_Texture>;
