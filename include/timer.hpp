@@ -4,6 +4,27 @@
 
 namespace zzx {
 
+template <
+    typename _Duration = std::chrono::milliseconds, typename _Clock = std::chrono::steady_clock>
+struct Time {
+public:
+    using Duration  = _Duration;
+    using Clock     = _Clock;
+    using TimePoint = std::chrono::time_point<Clock, Duration>;
+
+private:
+    static TimePoint now;
+
+public:
+    static TimePoint Now( ) { return std::chrono::time_point_cast<Duration>(Clock::now( )); }
+
+    static TimePoint Get( ) noexcept { return now; }
+
+    static void Set(const TimePoint &now) noexcept { Time::now = now; }
+
+    static void Update( ) { SetNow(Now( )); }
+};
+
 template <typename _Duration = std::chrono::milliseconds>
 class Interval {
 public:
@@ -33,17 +54,14 @@ public:
     using Duration  = _Duration;
     using Clock     = _Clock;
     using TimePoint = std::chrono::time_point<Clock, Duration>;
+    using Time      = Time<Duration, Clock>;
 
 private:
     TimePoint next;
 
 public:
-    inline static TimePoint Now( ) {
-        return std::chrono::time_point_cast<Duration>(Clock::now( ));
-    };
-
     _Timer(const Duration &interval)
-        : next {Now( ) + interval} { }
+        : next {Time::Now( ) + interval} { }
 
     _Timer(const TimePoint &now, const Duration &interval)
         : next {now + interval} { }
@@ -54,18 +72,20 @@ public:
 
     void Set(const TimePoint &now) noexcept {
         next = now + static_cast<Derived *>(this)->GetInterval( );
+    }
+
+    void Reset( ) noexcept {
+        next = Time::Now( ) + static_cast<Derived *>(this)->GetInterval( );
     };
 
-    void Reset( ) noexcept { next = Now( ) + static_cast<Derived *>(this)->GetInterval( ); };
-
-    bool Test(const TimePoint &now) {
+    bool Test(const TimePoint &now = Time::Get( )) {
         if (now > next) {
             next += static_cast<Derived *>(this)->GetInterval( );
             return true;
         } else {
             return false;
         }
-    };
+    }
 };
 
 template <

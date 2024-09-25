@@ -18,23 +18,9 @@ AnimationAsset::AnimationAsset(
           renderer, file, length, shape, shift)}
     , Interval(interval) { }
 
-Animation::TimePoint Animation::now = Animation::Now( );
-
-Animation::TimePoint Animation::GetNow( ) noexcept {
-    return now;
-}
-
-void Animation::UpdateNow( ) {
-    SetNow(Timming::Now( ));
-}
-
-void Animation::SetNow(const TimePoint &now) noexcept {
-    Animation::now = now;
-}
-
 Animation::Animation(const AnimationAsset &asset)
     : Counting( )
-    , Timming(GetNow( ), asset.GetInterval( ))
+    , Timming(Time::Get( ), asset.GetInterval( ))
     , asset {&asset} { }
 
 Animation::TimePoint Animation::GetTime( ) const noexcept {
@@ -62,31 +48,31 @@ void Animation::SetCount(Type i) noexcept {
 }
 
 void Animation::DrawOn(const Renderer &renderer, const Vector2I &pos) {
-    return asset->DrawOn(Add(Test(now)), renderer, pos);
+    return asset->DrawOn(Add(Test(Time::Get( ))), renderer, pos);
 }
 
 void Animation::DrawOn(const Renderer &renderer, const Vector2F &pos) {
-    return asset->DrawOn(Add(Test(now)), renderer, pos);
+    return asset->DrawOn(Add(Test(Time::Get( ))), renderer, pos);
 }
 
 void Animation::DrawOn(const Renderer &renderer, const Vector2I &pos, float scale) {
-    return asset->DrawOn(Add(Test(now)), renderer, pos, scale);
+    return asset->DrawOn(Add(Test(Time::Get( ))), renderer, pos, scale);
 }
 
 void Animation::DrawOn(const Renderer &renderer, const Vector2F &pos, float scale) {
-    return asset->DrawOn(Add(Test(now)), renderer, pos, scale);
+    return asset->DrawOn(Add(Test(Time::Get( ))), renderer, pos, scale);
 }
 
 void Animation::DrawOn(
     const Renderer &renderer, const Vector2I &pos, float scale, Deg rotation,
     const Vector2I &center, Flip flip) {
-    return asset->DrawOn(Add(Test(now)), renderer, pos, scale, rotation, center, flip);
+    return asset->DrawOn(Add(Test(Time::Get( ))), renderer, pos, scale, rotation, center, flip);
 }
 
 void Animation::DrawOn(
     const Renderer &renderer, const Vector2F &pos, float scale, Deg rotation,
     const Vector2F &center, Flip flip) {
-    return asset->DrawOn(Add(Test(now)), renderer, pos, scale, rotation, center, flip);
+    return asset->DrawOn(Add(Test(Time::Get( ))), renderer, pos, scale, rotation, center, flip);
 }
 
 }  // namespace zzx

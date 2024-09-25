@@ -33,12 +33,17 @@ class Surface
 private:
     using unique_ptr = std::unique_ptr<SDL_Surface, SurfaceHelper>;
 
+    Surface(const Surface &)            = delete;
+    Surface &operator=(const Surface &) = delete;
+
 public:
     using unique_ptr::unique_ptr;
     Surface(const char *file);
     Surface(const std::string &file);
     Surface(int width, int height, int depth, uint32_t format);
-    ~Surface( ) = default;
+    ~Surface( )                    = default;
+    Surface(Surface &&)            = default;
+    Surface &operator=(Surface &&) = default;
 };
 
 class SurfaceShared
@@ -52,7 +57,11 @@ public:
     SurfaceShared(const char *file);
     SurfaceShared(const std::string &file);
     SurfaceShared(int width, int height, int depth, uint32_t format);
-    ~SurfaceShared( ) noexcept = default;
+    ~SurfaceShared( ) noexcept                      = default;
+    SurfaceShared(const SurfaceShared &)            = default;
+    SurfaceShared &operator=(const SurfaceShared &) = default;
+    SurfaceShared(SurfaceShared &&)                 = default;
+    SurfaceShared &operator=(SurfaceShared &&)      = default;
 };
 
 }  // namespace zzx

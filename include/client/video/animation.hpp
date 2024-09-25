@@ -46,14 +46,9 @@ public:
     using Flip      = AnimationAsset::Flip;
 
 private:
-    static TimePoint      now;
     const AnimationAsset *asset;
 
 public:
-    static TimePoint GetNow( ) noexcept;
-    static void      UpdateNow( );
-    static void      SetNow(const TimePoint &now) noexcept;
-
     Animation(const AnimationAsset &asset);
     ~Animation( )                               = default;
     Animation(Animation &&) noexcept            = default;

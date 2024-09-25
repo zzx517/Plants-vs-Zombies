@@ -7,6 +7,7 @@
 #include "image.hpp"
 #include "render.hpp"
 #include "sdl_init.hpp"
+#include "surface.hpp"
 
 namespace zzx {
 
@@ -27,9 +28,16 @@ public:
         using SDL_Error::SDL_Error;
     };
 
+    class CreateFromSurfaceError: public SDL_Error {
+    public:
+        using SDL_Error::SDL_Error;
+    };
+
     void                operator( )(SDL_Texture *) noexcept;
     static SDL_Texture *Load(const Renderer &renderer, const char *file);
     static SDL_Texture *Load(const Renderer &renderer, const std::string &file);
+    static SDL_Texture *Create(const Renderer &renderer, const Surface &surface);
+    static SDL_Texture *Create(const Renderer &renderer, SDL_Surface *surface);
 };
 
 template <typename T>
@@ -157,13 +165,15 @@ public:
     using unique_ptr::unique_ptr;
     Texture(const Renderer &renderer, const char *file);
     Texture(const Renderer &renderer, const std::string &file);
+    Texture(const Renderer &renderer, const Surface &surface);
+    Texture(const Renderer &renderer, SDL_Surface *surface);
     ~Texture( ) noexcept           = default;
     Texture(Texture &&)            = default;
     Texture &operator=(Texture &&) = default;
 };
 
 class TextureShared
-    : public _TextureBase<Texture>
+    : public _TextureBase<TextureShared>
     , public std::shared_ptr<SDL_Texture> {
 private:
     using shared_ptr = std::shared_ptr<SDL_Texture>;
@@ -172,7 +182,13 @@ public:
     using shared_ptr::shared_ptr;
     TextureShared(const Renderer &renderer, const char *file);
     TextureShared(const Renderer &renderer, const std::string &file);
-    ~TextureShared( ) noexcept = default;
+    TextureShared(const Renderer &renderer, const Surface &surface);
+    TextureShared(const Renderer &renderer, SDL_Surface *surface);
+    ~TextureShared( ) noexcept                      = default;
+    TextureShared(const TextureShared &)            = default;
+    TextureShared &operator=(const TextureShared &) = default;
+    TextureShared(TextureShared &&)                 = default;
+    TextureShared &operator=(TextureShared &&)      = default;
 };
 
 using Image = ImageOf<Texture>;
