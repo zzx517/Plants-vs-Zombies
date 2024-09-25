@@ -19,7 +19,7 @@ SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build/lib)
 include_directories(./include)
 include_directories(./include/client)
 include_directories(./include/client/video)
-# include_directories(./include/client/input)
+include_directories(./include/client/sound)
 # include_directories(./include/client/scene)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

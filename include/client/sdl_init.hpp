@@ -26,7 +26,7 @@ private:
 public:
     static const SDL &Init(
         Flags sdl = SDL_INIT_EVERYTHING, Flags img = IMG_INIT_PNG | IMG_INIT_JPG,
-        Flags mix = MIX_INIT_MP3, int frequency = MIX_DEFAULT_FREQUENCY,
+        Flags mix = MIX_INIT_MP3 | MIX_INIT_OGG, int frequency = MIX_DEFAULT_FREQUENCY,
         uint16_t format = MIX_DEFAULT_FORMAT, int channels = MIX_DEFAULT_CHANNELS,
         int chunksize = 4096);
 };
