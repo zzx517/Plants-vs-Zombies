@@ -12,24 +12,30 @@ namespace zzx {
 
 using Color = SDL_Color;
 
-class RendererDeleter {
+class RendererHelper {
 public:
-    void operator( )(SDL_Renderer *) noexcept;
-};
+    using Flip      = SDL_RendererFlip;
+    using Flags     = uint32_t;
+    using BlendMode = SDL_BlendMode;
 
-class Renderer: public std::unique_ptr<SDL_Renderer, RendererDeleter> {
-private:
-    using unique_ptr = std::unique_ptr<SDL_Renderer, RendererDeleter>;
-
-public:
     class RendererInitError: public InitError {
     public:
         using InitError::InitError;
     };
 
-    using Flip      = SDL_RendererFlip;
-    using Flags     = uint32_t;
-    using BlendMode = SDL_BlendMode;
+    void                 operator( )(SDL_Renderer *) noexcept;
+    static SDL_Renderer *Create(const Window &, int index = -1, Flags flags = 0);
+    static SDL_Renderer *Create(const Surface &);
+};
+
+class Renderer: public std::unique_ptr<SDL_Renderer, RendererHelper> {
+private:
+    using unique_ptr = std::unique_ptr<SDL_Renderer, RendererHelper>;
+
+public:
+    using Flip      = RendererHelper::Flip;
+    using Flags     = RendererHelper::Flags;
+    using BlendMode = RendererHelper::BlendMode;
 
     using unique_ptr::unique_ptr;
     Renderer(const Window &, int index = -1, Flags flags = 0);
@@ -42,6 +48,8 @@ public:
     void  Clear( );
     void  Clear(Color c);
     void  Present( );
+
+    static Renderer &Get( );
 };
 
 }  // namespace zzx

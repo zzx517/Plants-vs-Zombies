@@ -118,7 +118,7 @@ public:
     ~Counting( ) = default;
 
     inline Type GetPeriod( ) const noexcept {
-        return static_cast<const Derived *>(this)->GetAsset( )->GetPeriod( );
+        return static_cast<const Derived *>(this)->GetAsset( ).GetPeriod( );
     }
 };
 

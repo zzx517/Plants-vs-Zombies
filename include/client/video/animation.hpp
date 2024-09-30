@@ -9,19 +9,27 @@ namespace zzx {
 
 class AnimationAsset
     : public Atlas
-    , public Interval<> {
+    , public Interval<>
+    , public Periodic<int> {
 private:
     using Interval = Interval<>;
+    using Periodic = Periodic<int>;
 
 public:
-    using Type = Atlas::Type;
+    using Type = Periodic::Type;
 
     AnimationAsset(
-        const Renderer &renderer, const char *file, int length, const Vector2I &shape,
-        const RectI &shift, const Duration &interval);
+        const char *file, const Vector2I &shape, const RectI &shift, const Duration &interval,
+        Type length);
     AnimationAsset(
-        const Renderer &renderer, const std::string &file, int length, const Vector2I &shape,
-        const RectI &shift, const Duration &interval);
+        const std::string &file, const Vector2I &shape, const RectI &shift,
+        const Duration &interval, Type length);
+    AnimationAsset(
+        const char *file, const Vector2I &shape, const Vector2I &shift,
+        const Duration &interval, Type length);
+    AnimationAsset(
+        const std::string &file, const Vector2I &shape, const Vector2I &shift,
+        const Duration &interval, Type length);
     ~AnimationAsset( )                                    = default;
     AnimationAsset(AnimationAsset &&) noexcept            = default;
     AnimationAsset &operator=(AnimationAsset &&) noexcept = default;
@@ -56,27 +64,25 @@ public:
     Animation(const Animation &)                = default;
     Animation &operator=(const Animation &)     = default;
 
-    inline const AnimationAsset *GetAsset( ) const { return asset; };
-
+    const AnimationAsset &GetAsset( ) const;
+    void                  SetAsset(const AnimationAsset &asset);
     using Counting::GetPeriod;
     using Timming::GetInterval;
-    inline Type      GetCount( ) const noexcept;
-    inline void      ResetCount( ) noexcept;
-    inline void      SetCount(Type i) noexcept;
-    inline TimePoint GetTime( ) const noexcept;
-    inline void      ResetTime( ) noexcept;
-    inline void      SetTime(const TimePoint &now) noexcept;
+    Type      GetCount( ) const noexcept;
+    void      ResetCount( ) noexcept;
+    void      SetCount(Type i) noexcept;
+    TimePoint GetTime( ) const noexcept;
+    void      ResetTime( ) noexcept;
+    void      SetTime(const TimePoint &now) noexcept;
 
-    void DrawOn(const Renderer &renderer, const Vector2I &pos);
-    void DrawOn(const Renderer &renderer, const Vector2F &pos);
-    void DrawOn(const Renderer &renderer, const Vector2I &pos, float scale);
-    void DrawOn(const Renderer &renderer, const Vector2F &pos, float scale);
+    void DrawOn(const Vector2I &pos);
+    void DrawOn(const Vector2F &pos);
+    void DrawOn(const Vector2I &pos, float scale);
+    void DrawOn(const Vector2F &pos, float scale);
     void DrawOn(
-        const Renderer &renderer, const Vector2I &pos, float scale, Deg rotation,
-        const Vector2I &center, Flip flip);
+        const Vector2I &pos, float scale, Deg rotation, const Vector2I &center, Flip flip);
     void DrawOn(
-        const Renderer &renderer, const Vector2F &pos, float scale, Deg rotation,
-        const Vector2F &center, Flip flip);
+        const Vector2F &pos, float scale, Deg rotation, const Vector2F &center, Flip flip);
 };
 
 }  // namespace zzx

@@ -179,6 +179,15 @@ template <typename T>
 struct Rect {
     T x, y, w, h;
 
+    Rect(T x, T y, T w, T h)
+        : x {x}
+        , y {y}
+        , w {w}
+        , h {h} { }
+
+    Rect(const Vector2<T> &xy, const Vector2<T> &wh)
+        : Rect {xy.x, xy.y, wh.x, wh.y} { }
+
     template <typename O>
     Rect<O> Cast( ) const {
         return Rect<O> {
@@ -204,6 +213,12 @@ struct Rect {
 
 template <>
 struct Rect<int>: public SDL_Rect {
+    Rect(int x, int y, int w, int h)
+        : SDL_Rect {x, y, w, h} { }
+
+    Rect(const Vector2<int> &xy, const Vector2<int> &wh)
+        : Rect {xy.x, xy.y, wh.x, wh.y} { }
+
     template <typename O>
     Rect<O> Cast( ) {
         return Rect<O> {
@@ -229,6 +244,12 @@ struct Rect<int>: public SDL_Rect {
 
 template <>
 struct Rect<float>: public SDL_FRect {
+    Rect(float x, float y, float w, float h)
+        : SDL_FRect {x, y, w, h} { }
+
+    Rect(const Vector2<float> &xy, const Vector2<float> &wh)
+        : Rect {xy.x, xy.y, wh.x, wh.y} { }
+
     template <typename O>
     Rect<O> Cast( ) {
         return Rect<O> {

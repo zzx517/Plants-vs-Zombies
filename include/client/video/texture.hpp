@@ -45,6 +45,9 @@ class _TextureBase {
 public:
     using Flip = Renderer::Flip;
 
+    _TextureBase( )  = default;
+    ~_TextureBase( ) = default;
+
     Vector2I GetSize( ) const {
         Vector2I size;
         GetSize(size.x, size.y);
@@ -71,82 +74,68 @@ public:
         }
     }
 
-    void DrawOn(const Renderer &renderer) const { DrawOn(nullptr, renderer, nullptr); }
+    void DrawOn( ) const { DrawOn(nullptr, nullptr); }
 
-    void DrawOn(const Renderer &renderer, const RectI &target) const {
-        DrawOn(nullptr, renderer, &target);
+    void DrawOn(const RectI &target) const { DrawOn(nullptr, &target); }
+
+    void DrawOn(const RectF &target) const { DrawOn(nullptr, &target); }
+
+    void DrawOn(const RectI &target, Deg rotation, const Point2I &center, Flip flip) const {
+        DrawOn(nullptr, &target, rotation, &center, flip);
     }
 
-    void DrawOn(const Renderer &renderer, const RectF &target) const {
-        DrawOn(nullptr, renderer, &target);
+    void DrawOn(const RectF &target, Deg rotation, const Point2F &center, Flip flip) const {
+        DrawOn(nullptr, &target, rotation, &center, flip);
     }
+
+    void DrawOn(const RectI &source, const RectI &target) const { DrawOn(&source, &target); }
+
+    void DrawOn(const RectI &source, const RectF &target) const { DrawOn(&source, &target); }
 
     void DrawOn(
-        const Renderer &renderer, const RectI &target, Deg rotation, const Point2I &center,
+        const RectI &source, const RectI &target, Deg rotation, const Point2I &center,
         Flip flip) const {
-        DrawOn(nullptr, renderer, &target, rotation, &center, flip);
+        DrawOn(&source, &target, rotation, &center, flip);
     }
 
     void DrawOn(
-        const Renderer &renderer, const RectF &target, Deg rotation, const Point2F &center,
+        const RectI &source, const RectF &target, Deg rotation, const Point2F &center,
         Flip flip) const {
-        DrawOn(nullptr, renderer, &target, rotation, &center, flip);
+        DrawOn(&source, &target, rotation, &center, flip);
     }
 
-    void DrawOn(const RectI &source, const Renderer &renderer) const {
-        DrawOn(&source, renderer, nullptr);
-    }
-
-    void DrawOn(const RectI &source, const Renderer &renderer, const RectI &target) const {
-        DrawOn(&source, renderer, &target);
-    }
-
-    void DrawOn(const RectI &source, const Renderer &renderer, const RectF &target) const {
-        DrawOn(&source, renderer, &target);
-    }
-
-    void DrawOn(
-        const RectI &source, const Renderer &renderer, const RectI &target, Deg rotation,
-        const Point2I &center, Flip flip) const {
-        DrawOn(&source, renderer, &target, rotation, &center, flip);
-    }
-
-    void DrawOn(
-        const RectI &source, const Renderer &renderer, const RectF &target, Deg rotation,
-        const Point2F &center, Flip flip) const {
-        DrawOn(&source, renderer, &target, rotation, &center, flip);
-    }
-
-    void DrawOn(const RectI *source, const Renderer &renderer, const RectI *target) const {
+    void DrawOn(const RectI *source, const RectI *target) const {
         if (SDL_RenderCopy(
-                renderer.get( ), static_cast<const T *>(this)->get( ), source, target)) {
+                Renderer::Get( ).get( ), static_cast<const T *>(this)->get( ), source,
+                target)) {
             throw TextureHelper::RendererDrawError( );
         }
     }
 
-    void DrawOn(const RectI *source, const Renderer &renderer, const RectF *target) const {
+    void DrawOn(const RectI *source, const RectF *target) const {
         if (SDL_RenderCopyF(
-                renderer.get( ), static_cast<const T *>(this)->get( ), source, target)) {
+                Renderer::Get( ).get( ), static_cast<const T *>(this)->get( ), source,
+                target)) {
             throw TextureHelper::RendererDrawError( );
         }
     }
 
     void DrawOn(
-        const RectI *source, const Renderer &renderer, const RectI *target, Deg rotation,
-        const Point2I *center, Flip flip) const {
+        const RectI *source, const RectI *target, Deg rotation, const Point2I *center,
+        Flip flip) const {
         if (SDL_RenderCopyEx(
-                renderer.get( ), static_cast<const T *>(this)->get( ), source, target, rotation,
-                center, flip)) {
+                Renderer::Get( ).get( ), static_cast<const T *>(this)->get( ), source, target,
+                rotation, center, flip)) {
             throw TextureHelper::RendererDrawError( );
         }
     }
 
     void DrawOn(
-        const RectI *source, const Renderer &renderer, const RectF *target, Deg rotation,
-        const Point2F *center, Flip flip) const {
+        const RectI *source, const RectF *target, Deg rotation, const Point2F *center,
+        Flip flip) const {
         if (SDL_RenderCopyExF(
-                renderer.get( ), static_cast<const T *>(this)->get( ), source, target, rotation,
-                center, flip)) {
+                Renderer::Get( ).get( ), static_cast<const T *>(this)->get( ), source, target,
+                rotation, center, flip)) {
             throw TextureHelper::RendererDrawError( );
         }
     }
@@ -163,10 +152,10 @@ private:
 
 public:
     using unique_ptr::unique_ptr;
-    Texture(const Renderer &renderer, const char *file);
-    Texture(const Renderer &renderer, const std::string &file);
-    Texture(const Renderer &renderer, const Surface &surface);
-    Texture(const Renderer &renderer, SDL_Surface *surface);
+    Texture(const char *file);
+    Texture(const std::string &file);
+    Texture(const Surface &surface);
+    Texture(SDL_Surface *surface);
     ~Texture( ) noexcept           = default;
     Texture(Texture &&)            = default;
     Texture &operator=(Texture &&) = default;
@@ -180,10 +169,10 @@ private:
 
 public:
     using shared_ptr::shared_ptr;
-    TextureShared(const Renderer &renderer, const char *file);
-    TextureShared(const Renderer &renderer, const std::string &file);
-    TextureShared(const Renderer &renderer, const Surface &surface);
-    TextureShared(const Renderer &renderer, SDL_Surface *surface);
+    TextureShared(const char *file);
+    TextureShared(const std::string &file);
+    TextureShared(const Surface &surface);
+    TextureShared(SDL_Surface *surface);
     ~TextureShared( ) noexcept                      = default;
     TextureShared(const TextureShared &)            = default;
     TextureShared &operator=(const TextureShared &) = default;
@@ -191,6 +180,26 @@ public:
     TextureShared &operator=(TextureShared &&)      = default;
 };
 
-using Image = ImageOf<Texture>;
+class Image
+    : public Texture
+    , public SingleDrawingObject<Image> {
+private:
+    using SingleDrawingObject = SingleDrawingObject<Image>;
+
+    Image(const Image &)            = delete;
+    Image &operator=(const Image &) = delete;
+
+public:
+    Image(const char *file, const RectI &shift);
+    Image(const std::string &file, const RectI &shift);
+    Image(const char *file, const Vector2I &shift);
+    Image(const std::string &file, const Vector2I &shift);
+    ~Image( )                  = default;
+    Image(Image &&)            = default;
+    Image &operator=(Image &&) = default;
+
+    using SingleDrawingObject::DrawOn;
+    using Texture::DrawOn;
+};
 
 }  // namespace zzx

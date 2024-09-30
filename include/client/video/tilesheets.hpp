@@ -5,15 +5,7 @@
 
 namespace zzx {
 
-class Tilesheets
-    : public Texture
-    , public Periodic<int> {
-private:
-    using Periodic = Periodic<int>;
-
-public:
-    using Type = Periodic::Type;
-
+class Tilesheets: public Texture {
 private:
     Vector2I shape, size;
 
@@ -21,33 +13,53 @@ private:
     Tilesheets &operator=(const Tilesheets &) = delete;
 
 public:
-    Tilesheets(const Renderer &renderer, const char *file, int length, const Vector2I &shape);
-    Tilesheets(
-        const Renderer &renderer, const std::string &file, int length, const Vector2I &shape);
+    Tilesheets(const char *file, const Vector2I &shape);
+    Tilesheets(const std::string &file, const Vector2I &shape);
     ~Tilesheets( )                       = default;
     Tilesheets(Tilesheets &&)            = default;
     Tilesheets &operator=(Tilesheets &&) = default;
 
 
-    inline int      GetRows( ) const noexcept;
-    inline int      GetCols( ) const noexcept;
+    int      GetRows( ) const noexcept;
+    int      GetCols( ) const noexcept;
     // {.x = cols, .y = rows}
-    inline Vector2I GetShape( ) const;
-    inline Vector2I GetSize( ) const;
-    inline void     GetSize(int &w, int &h) const;
+    Vector2I GetShape( ) const;
+    Vector2I GetSize( ) const;
+    void     GetSize(int &w, int &h) const;
 
     RectI At(int i) const;
 
-    void DrawOn(int i, const Renderer &renderer, const RectI &target) const;
-    void DrawOn(int i, const Renderer &renderer, const RectF &target) const;
+    void DrawOn(int i, const RectI &target) const;
+    void DrawOn(int i, const RectF &target) const;
     void DrawOn(
-        int i, const Renderer &renderer, const RectI &target, Deg rotation,
-        const Vector2I &center, Flip flip) const;
+        int i, const RectI &target, Deg rotation, const Vector2I &center, Flip flip) const;
     void DrawOn(
-        int i, const Renderer &renderer, const RectF &target, Deg rotation,
-        const Vector2F &center, Flip flip) const;
+        int i, const RectF &target, Deg rotation, const Vector2F &center, Flip flip) const;
 };
 
-using Atlas = ImageOf<Tilesheets, int>;
+// using Atlas = ImageOf<Tilesheets, int>;
+class Atlas
+    : public Tilesheets
+    , public SingleDrawingObject<Atlas, int> {
+private:
+    using SingleDrawingObject = SingleDrawingObject<Atlas, int>;
+
+    Atlas(const Atlas &)            = delete;
+    Atlas &operator=(const Atlas &) = delete;
+
+public:
+    using Tilesheets::Flip;
+
+    Atlas(const char *file, const Vector2I &shape, const RectI &shift);
+    Atlas(const std::string &file, const Vector2I &shape, const RectI &shift);
+    Atlas(const char *file, const Vector2I &shape, const Vector2I &shift);
+    Atlas(const std::string &file, const Vector2I &shape, const Vector2I &shift);
+    ~Atlas( )                  = default;
+    Atlas(Atlas &&)            = default;
+    Atlas &operator=(Atlas &&) = default;
+
+    using SingleDrawingObject::DrawOn;
+    using Tilesheets::DrawOn;
+};
 
 }  // namespace zzx

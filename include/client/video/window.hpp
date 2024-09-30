@@ -9,31 +9,33 @@
 
 namespace zzx {
 
-class WindowDeleter {
+class WindowHelper {
 public:
-    void operator( )(SDL_Window *) noexcept;
-};
+    using Flags = uint32_t;
 
-class Window: public std::unique_ptr<SDL_Window, WindowDeleter> {
-private:
-    using unique_ptr = std::unique_ptr<SDL_Window, WindowDeleter>;
-
-public:
     class WindowInitError: public InitError {
     public:
         using InitError::InitError;
     };
 
-    using Flags = uint32_t;
-    static constexpr RectI CENTERED_HALF
-        = {SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1920 / 2, 1080 / 2};
+    void               operator( )(SDL_Window *) noexcept;
+    static SDL_Window *Create(const char *title, const RectI &pos, Flags flags);
+    static SDL_Window *Create(const std::string &title, const RectI &pos, Flags flags);
+};
+
+class Window: public std::unique_ptr<SDL_Window, WindowHelper> {
+private:
+    using unique_ptr = std::unique_ptr<SDL_Window, WindowHelper>;
+
+public:
+    using Flags = WindowHelper::Flags;
 
     using unique_ptr::unique_ptr;
-    Window(
-        const std::string &title, const RectI &pos = CENTERED_HALF,
-        Flags flags = SDL_WINDOW_SHOWN);
-    Window(const char *title, const RectI &pos = CENTERED_HALF, Flags flags = SDL_WINDOW_SHOWN);
+    Window(const std::string &title, const RectI &pos, Flags flags);
+    Window(const char *title, const RectI &pos, Flags flags);
     ~Window( ) noexcept = default;
+
+    static Window &Get( );
 };
 
 }  // namespace zzx

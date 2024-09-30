@@ -2,23 +2,31 @@
 
 namespace zzx {
 
-void RendererDeleter::operator( )(SDL_Renderer *r) noexcept {
+void RendererHelper::operator( )(SDL_Renderer *r) noexcept {
     SDL_DestroyRenderer(r);
 }
 
-Renderer::Renderer(const Window &window, int index, Flags flags)
-    : unique_ptr(SDL_CreateRenderer(window.get( ), index, flags)) {
-    if (this->get( ) == nullptr) {
-        throw RendererInitError();
+SDL_Renderer *RendererHelper::Create(const Window &w, int index, Flags flags) {
+    SDL_Renderer *r = SDL_CreateRenderer(w.get( ), index, flags);
+    if (r == nullptr) {
+        throw RendererInitError( );
     }
+    return r;
 }
 
-Renderer::Renderer(const Surface &surface)
-    : unique_ptr(SDL_CreateSoftwareRenderer(surface.get( ))) {
-    if (this->get( ) == nullptr) {
-        throw RendererInitError();
+SDL_Renderer *RendererHelper::Create(const Surface &s) {
+    SDL_Renderer *r = SDL_CreateSoftwareRenderer(s.get( ));
+    if (r == nullptr) {
+        throw RendererInitError( );
     }
+    return r;
 }
+
+Renderer::Renderer(const Window &w, int index, Flags flags)
+    : unique_ptr(RendererHelper::Create(w, index, flags)) { }
+
+Renderer::Renderer(const Surface &s)
+    : unique_ptr(RendererHelper::Create(s)) { }
 
 void Renderer::SetBlendMode(BlendMode mode) {
     if (SDL_SetRenderDrawBlendMode(get( ), mode)) {
@@ -55,6 +63,11 @@ void Renderer::Clear(Color c) {
 
 void Renderer::Present( ) {
     SDL_RenderPresent(get( ));
+}
+
+Renderer &Renderer::Get( ) {
+    static Renderer r(Window::Get( ));
+    return r;
 }
 
 }  // namespace zzx

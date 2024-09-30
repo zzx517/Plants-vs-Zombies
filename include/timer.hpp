@@ -22,8 +22,12 @@ public:
 
     static void Set(const TimePoint &now) noexcept { Time::now = now; }
 
-    static void Update( ) { SetNow(Now( )); }
+    static void Update( ) { Set(Now( )); }
 };
+
+template <typename _Duration, typename _Clock>
+Time<_Duration, _Clock>::TimePoint Time<_Duration, _Clock>::now
+    = Time<_Duration, _Clock>::Now( );
 
 template <typename _Duration = std::chrono::milliseconds>
 class Interval {
@@ -139,7 +143,7 @@ public:
     ~Timming( ) = default;
 
     inline Duration GetInterval( ) const noexcept {
-        return static_cast<const Derived *>(this)->GetAsset( )->GetInterval( );
+        return static_cast<const Derived *>(this)->GetAsset( ).GetInterval( );
     }
 };
 

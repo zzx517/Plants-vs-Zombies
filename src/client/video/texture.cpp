@@ -35,34 +35,44 @@ SDL_Texture *TextureHelper::Create(const Renderer &renderer, SDL_Surface *surfac
     return t;
 }
 
-Texture::Texture(const Renderer &renderer, const char *file)
-    : unique_ptr(TextureHelper::Load(renderer, file)) { }
+Texture::Texture(const char *file)
+    : unique_ptr(TextureHelper::Load(Renderer::Get( ), file)) { }
 
-Texture::Texture(const Renderer &renderer, const std::string &file)
-    : unique_ptr(TextureHelper::Load(renderer, file)) { }
+Texture::Texture(const std::string &file)
+    : unique_ptr(TextureHelper::Load(Renderer::Get( ), file)) { }
 
-Texture::Texture(const Renderer &renderer, const Surface &surface)
-    : unique_ptr(TextureHelper::Create(renderer, surface)) { }
+Texture::Texture(const Surface &surface)
+    : unique_ptr(TextureHelper::Create(Renderer::Get( ), surface)) { }
 
-Texture::Texture(const Renderer &renderer, SDL_Surface *surface)
-    : unique_ptr(TextureHelper::Create(renderer, surface)) { }
+Texture::Texture(SDL_Surface *surface)
+    : unique_ptr(TextureHelper::Create(Renderer::Get( ), surface)) { }
 
-TextureShared::TextureShared(const Renderer &renderer, const char *file)
-    : shared_ptr(TextureHelper::Load(renderer, file), TextureHelper( )) { }
+TextureShared::TextureShared(const char *file)
+    : shared_ptr(TextureHelper::Load(Renderer::Get( ), file), TextureHelper( )) { }
 
-TextureShared::TextureShared(const Renderer &renderer, const std::string &file)
-    : shared_ptr(TextureHelper::Load(renderer, file), TextureHelper( )) { }
+TextureShared::TextureShared(const std::string &file)
+    : shared_ptr(TextureHelper::Load(Renderer::Get( ), file), TextureHelper( )) { }
 
-TextureShared::TextureShared(const Renderer &renderer, const Surface &surface)
-    : shared_ptr(TextureHelper::Create(renderer, surface), TextureHelper( )) { }
+TextureShared::TextureShared(const Surface &surface)
+    : shared_ptr(TextureHelper::Create(Renderer::Get( ), surface), TextureHelper( )) { }
 
-TextureShared::TextureShared(const Renderer &renderer, SDL_Surface *surface)
-    : shared_ptr(TextureHelper::Create(renderer, surface), TextureHelper( )) { }
+TextureShared::TextureShared(SDL_Surface *surface)
+    : shared_ptr(TextureHelper::Create(Renderer::Get( ), surface), TextureHelper( )) { }
 
-template class ImageOf<Texture>;
-template ImageOf<Texture>::ImageOf<const Renderer &, const char *>(
-    const Renderer &renderer, const char *file, const RectI &shift);
-template ImageOf<Texture>::ImageOf<const Renderer &, const std::string &>(
-    const Renderer &renderer, const std::string &file, const RectI &shift);
+Image::Image(const char *file, const RectI &shift)
+    : Texture {file}
+    , SingleDrawingObject {shift} { }
+
+Image::Image(const std::string &file, const RectI &shift)
+    : Texture {file}
+    , SingleDrawingObject {shift} { }
+
+Image::Image(const char *file, const Vector2I &shift)
+    : Texture {file}
+    , SingleDrawingObject {shift} { }
+
+Image::Image(const std::string &file, const Vector2I &shift)
+    : Texture {file}
+    , SingleDrawingObject {shift} { }
 
 }  // namespace zzx

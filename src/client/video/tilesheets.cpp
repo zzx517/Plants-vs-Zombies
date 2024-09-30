@@ -2,17 +2,13 @@
 
 namespace zzx {
 
-Tilesheets::Tilesheets(
-    const Renderer &renderer, const char *file, int length, const Vector2I &shape)
-    : Texture {renderer, file}
-    , Periodic {length}
+Tilesheets::Tilesheets(const char *file, const Vector2I &shape)
+    : Texture {file}
     , shape {shape}
     , size {Texture::GetSize( ) / shape} { }
 
-Tilesheets::Tilesheets(
-    const Renderer &renderer, const std::string &file, int length, const Vector2I &shape)
-    : Texture {renderer, file}
-    , Periodic {length}
+Tilesheets::Tilesheets(const std::string &file, const Vector2I &shape)
+    : Texture {file}
     , shape {shape}
     , size {Texture::GetSize( ) / shape} { }
 
@@ -41,46 +37,42 @@ RectI Tilesheets::At(int i) const {
     return {i % shape.x * size.x, i / shape.x * size.y, size.x, size.y};
 }
 
-void Tilesheets::DrawOn(int i, const Renderer &renderer, const RectI &target) const {
+void Tilesheets::DrawOn(int i, const RectI &target) const {
     RectI source = At(i);
-    Texture::DrawOn(source, renderer, target);
+    Texture::DrawOn(source, target);
 }
 
-void Tilesheets::DrawOn(int i, const Renderer &renderer, const RectF &target) const {
+void Tilesheets::DrawOn(int i, const RectF &target) const {
     RectI source = At(i);
-    Texture::DrawOn(source, renderer, target);
-}
-
-void Tilesheets::DrawOn(
-    int i, const Renderer &renderer, const RectI &target, Deg rotation, const Vector2I &center,
-    Flip flip) const {
-    RectI source = At(i);
-    Texture::DrawOn(source, renderer, target, rotation, center, flip);
+    Texture::DrawOn(source, target);
 }
 
 void Tilesheets::DrawOn(
-    int i, const Renderer &renderer, const RectF &target, Deg rotation, const Vector2F &center,
-    Flip flip) const {
+    int i, const RectI &target, Deg rotation, const Vector2I &center, Flip flip) const {
     RectI source = At(i);
-    Texture::DrawOn(source, renderer, target, rotation, center, flip);
+    Texture::DrawOn(source, target, rotation, center, flip);
 }
 
-template class ImageOf<Tilesheets, int>;
-template ImageOf<Tilesheets, int>::ImageOf<
-    const Renderer &, const char *, int, const Vector2I &>(
-    const Renderer &renderer, const char *file, int len, const Vector2I &shape,
-    const RectI &shift);
-template ImageOf<Tilesheets, int>::ImageOf<
-    const Renderer &, const std::string &, int, const Vector2I &>(
-    const Renderer &renderer, const std::string &file, int len, const Vector2I &shape,
-    const RectI &shift);
-template ImageOf<Tilesheets, int>
-ImageOf<Tilesheets, int>::Init<const Renderer &, const char *, int, const Vector2I &>(
-    const Renderer &renderer, const char *file, int len, const Vector2I &shape,
-    const RectI &shift);
-template ImageOf<Tilesheets, int>
-ImageOf<Tilesheets, int>::Init<const Renderer &, const std::string &, int, const Vector2I &>(
-    const Renderer &renderer, const std::string &file, int len, const Vector2I &shape,
-    const RectI &shift);
+void Tilesheets::DrawOn(
+    int i, const RectF &target, Deg rotation, const Vector2F &center, Flip flip) const {
+    RectI source = At(i);
+    Texture::DrawOn(source, target, rotation, center, flip);
+}
+
+Atlas::Atlas(const char *file, const Vector2I &shape, const RectI &shift)
+    : Tilesheets {file, shape}
+    , SingleDrawingObject {shift} { }
+
+Atlas::Atlas(const std::string &file, const Vector2I &shape, const RectI &shift)
+    : Tilesheets {file, shape}
+    , SingleDrawingObject {shift} { }
+
+Atlas::Atlas(const char *file, const Vector2I &shape, const Vector2I &shift)
+    : Tilesheets {file, shape}
+    , SingleDrawingObject {shift} { }
+
+Atlas::Atlas(const std::string &file, const Vector2I &shape, const Vector2I &shift)
+    : Tilesheets {file, shape}
+    , SingleDrawingObject {shift} { }
 
 }  // namespace zzx
